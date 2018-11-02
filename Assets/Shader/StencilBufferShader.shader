@@ -1,8 +1,10 @@
-﻿Shader "Unlit/SphereShader"
+﻿Shader "Unlit/StencilBufferShader"
 {
 	Properties
 	{
 		_MainTex ("Texture", 2D) = "white" {}
+		_Color("Color", Color) = (0,0,0,1)
+		_Stencil("Stencil", int) = 0
 	}
 	SubShader
 	{
@@ -10,7 +12,7 @@
 		LOD 100
 		Stencil
 		{
-			Ref 2
+			Ref[_Stencil]
 			Comp Always
 			Pass Replace
 		}
@@ -39,7 +41,8 @@
 
 			sampler2D _MainTex;
 			float4 _MainTex_ST;
-			
+			float4 _Color;
+
 			v2f vert (appdata v)
 			{
 				v2f o;
@@ -55,7 +58,7 @@
 				fixed4 col = tex2D(_MainTex, i.uv);
 				// apply fog
 				UNITY_APPLY_FOG(i.fogCoord, col);
-				return float4(1,0,0,1);
+				return _Color;// float4(0, 1, 0, 1);
 			}
 			ENDCG
 		}
